@@ -40,6 +40,6 @@ zip -r ../../dist/touchaudio.wgt config.xml index.html js/ audio/ img/
 
 
 # Clean up.
-cd ..
+cd ../..
 rm -Rf tmp
 
