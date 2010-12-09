@@ -47,7 +47,7 @@
 			var a = audioNodes[evt.target._id];
 			try{
 				a.currentTime = 0; // doenst work on iOS, catch errors
-			}catch(){}
+			}catch(e){};
 			a.play();
 		});
 	</script>
