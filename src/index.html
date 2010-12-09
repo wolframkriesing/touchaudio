@@ -7,9 +7,13 @@
 	<!--<link rel="stylesheet" href="css/style.css" type="text/css">-->
 	<style>
 		#buttons button {
+			font-size: xx-large;
 			width: 33%;
 			height: 100px;
 			background-color: lightyellow;
+		}
+		#buttons button[disabled] {
+			color: white;
 		}
 	</style>
 </head>
@@ -26,9 +30,10 @@
 		var extension = navigator.userAgent.match(/Firefox/) ? ".ogg" : ".mp3";
 		var buttonsNode = embed.byId("buttons");
 		for (var i=0, l=audioFiles.length; i<l; i++){
-			embed.create("audio", {src:"audio/"+audioFiles[i]+extension}, embed.body());
-			var b = embed.create("button", {textContent:audioFiles[i]}, buttonsNode);
+			var a = embed.create("audio", {src:"audio/"+audioFiles[i]+extension}, embed.body());
+			var b = embed.create("button", {textContent:audioFiles[i], disabled:"disabled"}, buttonsNode);
 			b._id = i;
+			embed.on(a, "canplay", (function(b){return function(){ embed.removeAttr(b, "disabled") }})(b));
 		}
 		
 		// Play
