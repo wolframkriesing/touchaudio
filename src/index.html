@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html manifest="cache.manifest">
 <head>
 	<title>touchaudio</title>
 	<meta http-equiv="content-type" content="text/html; charset=utf-8">
@@ -35,7 +35,8 @@
 		var buttonsNode = embed.byId("buttons");
 		for (var i=0, l=audioFiles.length; i<l; i++){
 			var a = embed.create("audio", {src:"audio/"+audioFiles[i]+extension}, embed.body());
-			var b = embed.create("button", {textContent:audioFiles[i], disabled:"disabled"}, buttonsNode);
+			//var b = embed.create("button", {textContent:audioFiles[i], disabled:"disabled"}, buttonsNode);
+			var b = embed.create("button", {textContent:audioFiles[i]}, buttonsNode);
 			b._id = i;
 			embed.on(a, "canplay", (function(b){return function(){ embed.removeAttr(b, "disabled") }})(b));
 		}
@@ -44,7 +45,9 @@
 		var audioNodes = embed.query("audio");
 		embed.on(buttonsNode, "click", function(evt){
 			var a = audioNodes[evt.target._id];
-			a.currentTime = 0;
+			try{
+				a.currentTime = 0; // doenst work on iOS, catch errors
+			}catch(){}
 			a.play();
 		});
 	</script>
