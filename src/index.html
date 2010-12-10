@@ -26,33 +26,52 @@
 	
 	<script type="text/javascript" src="js/embed-kitchensink-android.uncompressed.js"></script>
 	<script type="text/javascript">
-		// Create
-		var audioFiles = [
-			"bnimanje", "goworit", "moskva", "sluschaitje",
-			"yello-intro", "yello-trumpet", "yello-doit", "yello-ha", "yello-keepon", "yello-snap"
-		];
-		var extension = navigator.userAgent.match(/Firefox/) ? ".ogg" : ".mp3";
-		var buttonsNode = embed.byId("buttons");
-		for (var i=0, l=audioFiles.length; i<l; i++){
-			var a = embed.create("audio", {src:"audio/"+audioFiles[i]+extension}, embed.body());
-a.controls = "controls";
-			//var b = embed.create("button", {textContent:audioFiles[i], disabled:"disabled"}, buttonsNode);
-			var b = embed.create("button", {textContent:audioFiles[i]}, buttonsNode);
-			b._id = i;
-			embed.on(a, "canplay", (function(b){return function(){
-				embed.removeAttr(b, "disabled")
-			}})(b));
-		}
-		
-		// Play
-		var audioNodes = embed.query("audio");
-		embed.on(buttonsNode, "click", function(evt){
-			var a = audioNodes[evt.target._id];
-			try{
-				a.currentTime = 0; // doenst work on iOS, catch errors
-			}catch(e){};
-			a.play();
-		});
+		(function(){
+			
+			// Helper function
+			function loadScript(fileName){
+				var s = document.createElement("script");
+				s.src = fileName;
+				s.type = "text/javascript";
+				document.body.appendChild(s);
+			}
+			
+			//
+			var isJil = !!embed.getObject("Widget.Multimedia.AudioPlayer");
+			loadScript("js/" + (isJil ? "jil-audio.js" : "html5-audio.js"));
+			
+			// Create
+			var audioFiles = [
+				"bnimanje", "goworit", "moskva", "sluschaitje",
+				"yello-intro", "yello-trumpet", "yello-doit", "yello-ha", "yello-keepon", "yello-snap"
+			];
+			var extension = navigator.userAgent.match(/Firefox/) ? ".ogg" : ".mp3";
+			var buttonsNode = embed.byId("buttons");
+			for (var i=0, l=audioFiles.length; i<l; i++){
+				//var b = embed.create("button", {textContent:audioFiles[i], disabled:"disabled"}, buttonsNode);
+				var b = embed.create("button", {textContent:audioFiles[i]}, buttonsNode);
+				b._id = i;
+				if (!isJil){
+					var a = embed.create("audio", {src:"audio/"+audioFiles[i]+extension}, embed.body());
+					embed.on(a, "canplay", (function(b){return function(){
+						embed.removeAttr(b, "disabled")
+					}})(b));
+				}
+			}
+			
+			// Play
+			var audioNodes = embed.query("audio");
+			embed.on(buttonsNode, "click", function(evt){
+				var id = evt.target._id;
+				if (isJil){
+					new myAudio("audio/" + audioFiles[id] + extension, {autoPlay:true});
+				} else {
+					var a = audioNodes[id];
+					a.load(); // On most mobile devices "a.currentTime = 0;" doesnt work, but load() seems to work better.
+					a.play();
+				}
+			});
+		})();
 	</script>
 </body>
 </html>
