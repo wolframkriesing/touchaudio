@@ -6,6 +6,11 @@
 
 	<!--<link rel="stylesheet" href="css/style.css" type="text/css">-->
 	<style>
+		body, html{
+			/* The bg and color is needed for WRTs which default to black for both, which is pretty useless :) */
+			background-color: white;
+			color: black;
+		}
 		#buttons button {
 			font-size: large;
 			width: 33%;
@@ -23,6 +28,7 @@
 </head>
 <body>
 	<div id="buttons"></div>
+	<div id="console"></div>
 	
 	<script type="text/javascript" src="js/embed-kitchensink-android.uncompressed.js"></script>
 	<script type="text/javascript">
@@ -64,7 +70,12 @@
 			embed.on(buttonsNode, "click", function(evt){
 				var id = evt.target._id;
 				if (isJil){
-					new myAudio("audio/" + audioFiles[id] + extension, {autoPlay:true});
+					try{
+						Widget.Multimedia.AudioPlayer.stop();
+						jilPlayer = new myAudio("audio/" + audioFiles[id] + extension, {autoPlay:true});
+					}catch(e){
+						embed.byId("console").innerHTML += e+"<br />";
+					}
 				} else {
 					var a = audioNodes[id];
 					a.load(); // On most mobile devices "a.currentTime = 0;" doesnt work, but load() seems to work better.
